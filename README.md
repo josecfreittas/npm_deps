@@ -1,9 +1,13 @@
+[![Hex.pm Version](https://img.shields.io/hexpm/v/npm_deps.svg?color=blueviolet)](https://hex.pm/packages/npm_deps)
+[![Hex docs](https://img.shields.io/badge/hex.pm-docs-blue.svg?style=flat)](https://hexdocs.pm/npm_deps)
+[![License: MIT](https://img.shields.io/badge/License-MIT-green.svg)](./LICENSE)
+
+
 # NpmDeps
 
 <!-- MDOC !-->
 
-### A tool to help you manage your NPM dependencies in Elixir projects.
-#### >> without the need of Node.js or NPM in your project or in your machine <<
+### A tool to help you manage your NPM dependencies in Elixir projects without the need of Node.js or NPM in your project or in your machine.
 
 ⚠️ This project is very experimental, in early development and should be used with caution.
 
@@ -19,7 +23,7 @@ def project do
   [
     app: :your_app,
     version: "0.1.0",
-    elixir: "~> 1.12",
+    elixir: "~> 1.14",
     ...
     npm_deps: npm_deps()
   ]
@@ -28,7 +32,7 @@ end
 def deps do
   [
     ...
-    {:npm_deps, "~> 0.1.0"}
+    {:npm_deps, "~> 0.1.0", runtime: false}
   ]
 end
 
