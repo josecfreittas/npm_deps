@@ -8,8 +8,13 @@ defmodule NpmDeps do
   require Logger
 
   def get(deps) do
+    Logger.info("Downloading NPM packages...")
+
     deps
-    |> Enum.each(fn {name, version} -> get(name, version) end)
+    |> Task.async_stream(fn {name, version} -> get(name, version) end)
+    |> Enum.each(fn {:ok, {:ok, {name, version}}} ->
+      Logger.info("Downloaded #{name} #{version}")
+    end)
   end
 
   def get(name, version) when is_atom(name), do: get(to_string(name), version)
@@ -18,24 +23,20 @@ defmodule NpmDeps do
     tmp_opts = if System.get_env("MIX_XDG"), do: %{os: :linux}, else: %{}
 
     tmp_dir =
-      freshdir_p(:filename.basedir(:user_cache, "npm-pkgs", tmp_opts)) ||
-        freshdir_p(Path.join(System.tmp_dir!(), "npm-pkgs")) ||
+      freshdir_path(:filename.basedir(:user_cache, "npm-pkgs", tmp_opts)) ||
+        freshdir_path(Path.join(System.tmp_dir!(), "npm-pkgs")) ||
         raise "could not install package. Set MIX_XGD=1 and then set XDG_CACHE_HOME to the path you want to use as cache"
 
-    url = "https://registry.npmjs.org/#{name}/-/#{name}-#{version}.tgz"
-    tar = fetch_body!(url)
-
-    case :erl_tar.extract({:binary, tar}, [:compressed, cwd: to_charlist(tmp_dir)]) do
-      :ok -> :ok
-      other -> raise "couldn't unpack archive: #{inspect(other)}"
+    with tar <- fetch_body!("https://registry.npmjs.org/#{name}/-/#{name}-#{version}.tgz"),
+         :ok <- :erl_tar.extract({:binary, tar}, [:compressed, cwd: to_charlist(tmp_dir)]),
+         package_path <- package_path(name),
+         :ok <- File.mkdir_p(Path.dirname(package_path)),
+         {:ok, _binary} <- File.cp_r(Path.join(tmp_dir, "package"), package_path) do
+      {:ok, {name, version}}
     end
-
-    package_path = package_path(name)
-    File.mkdir_p!(Path.dirname(package_path))
-    File.cp_r!(Path.join(tmp_dir, "package"), package_path)
   end
 
-  defp freshdir_p(path) do
+  defp freshdir_path(path) do
     with {:ok, _} <- File.rm_rf(path),
          :ok <- File.mkdir_p(path) do
       path
@@ -46,7 +47,6 @@ defmodule NpmDeps do
 
   defp fetch_body!(url) do
     url = String.to_charlist(url)
-    Logger.debug("Downloading package from #{url}")
 
     {:ok, _} = Application.ensure_all_started(:inets)
     {:ok, _} = Application.ensure_all_started(:ssl)
