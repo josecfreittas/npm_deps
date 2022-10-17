@@ -12,11 +12,9 @@
 ⚠️ This project is very experimental, in early development and should be used with caution.
 
 
-## Installation
+## Setup
 
-The package can be installed by adding `npm_deps` to your list of dependencies in `mix.exs`.
-
-You should also add `npm_deps` to your `project/0` in `mix.exs`.
+The package can be installed by adding `npm_deps` to your list of dependencies in `mix.exs`. And you should also add the `npm_deps` to your `project/0`, pointing to a list with your desired NPM dependencies.
 
 ```elixir
 def project do
@@ -43,8 +41,7 @@ def npm_deps do
 end
 ```
 
-## Usage
-Once you have added the dependency to your project, you can run `mix npm_deps.get` to get your NPM dependencies.  
+Once you have added it, you can run `mix npm_deps.get` to get your NPM dependencies.  
 
 The NPM dependencies will be installed in the `deps/` directory of your project, side by side with the Elixir dependencies.  
 
@@ -60,6 +57,21 @@ import topbar from "topbar";
 topbar.config({ barColors: { 0: "#29d" }, shadowColor: "rgba(0, 0, 0, .3)" });
 window.addEventListener("phx:page-loading-start", info => topbar.show());
 window.addEventListener("phx:page-loading-stop", info => topbar.hide());
+```
+
+To run `npm_deps.get` in your deploy pipeline, you can add it to your `assets.deploy` task, also in `mix.exs`.
+
+```elixir
+defp aliases do
+  [
+    ...
+    "assets.deploy": [
+      "npm_deps.get",
+      "esbuild default --minify",
+      "phx.digest"
+    ]
+  ]
+end
 ```
 
 <!-- MDOC !-->
