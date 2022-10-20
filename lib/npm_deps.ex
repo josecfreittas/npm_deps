@@ -11,7 +11,7 @@ defmodule NpmDeps do
     Logger.info("Downloading NPM packages...")
 
     deps
-    |> Task.async_stream(fn {name, version} -> get(name, version) end)
+    |> Task.async_stream(fn {name, version} -> get(name, version) end, timeout: 60_000)
     |> Enum.each(fn {:ok, {:ok, {name, version}}} ->
       Logger.info("Downloaded #{name} #{version}")
     end)
