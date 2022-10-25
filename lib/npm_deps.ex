@@ -92,9 +92,5 @@ defmodule NpmDeps do
     {{String.to_charlist(authority), port}, []}
   end
 
-  @doc """
-  Returns the path to the package.
-  The package may not be available if it was not yet installed.
-  """
-  def package_path(name), do: Path.expand("deps/#{name}")
+  defp package_path(name), do: Path.expand("deps/#{name}")
 end

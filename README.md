@@ -36,10 +36,13 @@ end
 
 def npm_deps do
   [
+    {:alpinejs, "3.10.4"},
     {:topbar, "1.0.1"}
   ]
 end
 ```
+
+> Alpine.js and Topbar are used in the example above, but you can use any NPM package you want (as long as it doesn't have postinstall, and that it is distributed already compiled to use).
 
 Once you have added it, you can run `mix npm_deps.get` to get your NPM dependencies.  
 
@@ -52,11 +55,12 @@ import "phoenix_html";
 import { Socket } from "phoenix";
 import { LiveSocket } from "phoenix_live_view";
 import topbar from "topbar";
+import Alpine from "alpinejs";
 
-// Show progress bar on live navigation and form submits
-topbar.config({ barColors: { 0: "#29d" }, shadowColor: "rgba(0, 0, 0, .3)" });
-window.addEventListener("phx:page-loading-start", info => topbar.show());
-window.addEventListener("phx:page-loading-stop", info => topbar.hide());
+window.Alpine = Alpine;
+Alpine.start();
+
+...
 ```
 
 To run `npm_deps.get` in your deploy pipeline, you can add it to your `assets.deploy` task, also in `mix.exs`.
