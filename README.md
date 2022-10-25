@@ -30,7 +30,7 @@ end
 def deps do
   [
     ...
-    {:npm_deps, "~> 0.2.1", runtime: false}
+    {:npm_deps, "~> 0.2.2", runtime: false}
   ]
 end
 
