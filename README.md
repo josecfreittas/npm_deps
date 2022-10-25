@@ -9,7 +9,7 @@
 
 ### A tool to help you manage your NPM dependencies in Elixir projects without the need of Node.js or NPM in your project or in your machine.
 
-⚠️ This project is very experimental, in early development and should be used with caution.
+⚠️ This project is very experimental, in early development, and should be used with caution.
 
 
 ## Setup
@@ -42,7 +42,7 @@ def npm_deps do
 end
 ```
 
-> Alpine.js and Topbar are used in the example above, but you can use any NPM package you want (as long as it doesn't have postinstall, and that it is distributed already compiled to use).
+> Alpine.js and Topbar are used in the example above, but you can use any NPM package you want (as long as it doesn't have postinstall scripts, and it's distributed already compiled to use).
 
 Once you have added it, you can run `mix npm_deps.get` to get your NPM dependencies.  
 
@@ -63,7 +63,7 @@ Alpine.start();
 ...
 ```
 
-To run `npm_deps.get` in your deploy pipeline, you can add it to your `assets.deploy` task, also in `mix.exs`.
+To run `npm_deps.get` in your deployment pipeline, you can add it to your `assets.deploy` task, also in `mix.exs`.
 
 ```elixir
 defp aliases do
