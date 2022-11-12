@@ -16,30 +16,30 @@
 
 The package can be installed by adding `npm_deps` to your list of dependencies in `mix.exs`. And you should also add the `npm_deps` to your `project/0`, pointing to a list with your desired NPM dependencies.
 
-```elixir
-def project do
-  [
-    app: :your_app,
-    version: "0.1.0",
-    elixir: "~> 1.14",
-    ...
-    npm_deps: npm_deps()
-  ]
-end
+```diff
+  def project do
+    [
+      app: :your_app,
+      version: "0.1.0",
+      elixir: "~> 1.14",
+     ...
++      npm_deps: npm_deps()
+    ]
+  end
 
-def deps do
-  [
-    ...
-    {:npm_deps, "~> 0.2.2", runtime: false}
-  ]
-end
+  def deps do
+    [
+      ...
++     {:npm_deps, "~> 0.2.2", runtime: false}
+    ]
+  end
 
-def npm_deps do
-  [
-    {:alpinejs, "3.10.4"},
-    {:topbar, "1.0.1"}
-  ]
-end
++ def npm_deps do
++   [
++     {:alpinejs, "3.10.4"},
++     {:topbar, "1.0.1"}
++   ]
++ end
 ```
 
 > Alpine.js and Topbar are used in the example above, but you can use any NPM package you want (as long as it doesn't have postinstall scripts, and it's distributed already compiled to use).
@@ -65,17 +65,17 @@ Alpine.start();
 
 To run `npm_deps.get` in your deployment pipeline, you can add it to your `assets.deploy` task, also in `mix.exs`.
 
-```elixir
-defp aliases do
-  [
-    ...
-    "assets.deploy": [
-      "npm_deps.get",
-      "esbuild default --minify",
-      "phx.digest"
+```diff
+  defp aliases do
+    [
+      ...
+      "assets.deploy": [
++       "npm_deps.get",
+        "esbuild default --minify",
+        "phx.digest"
+      ]
     ]
-  ]
-end
+  end
 ```
 
 <!-- MDOC !-->
