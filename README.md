@@ -30,19 +30,21 @@ The package can be installed by adding `npm_deps` to your list of dependencies i
   def deps do
     [
       ...
-+     {:npm_deps, "~> 0.2.2", runtime: false}
++     {:npm_deps, "~> 0.3.0", runtime: false}
     ]
   end
 
 + def npm_deps do
 +   [
-+     {:alpinejs, "3.10.4"},
-+     {:topbar, "1.0.1"}
++     {:alpinejs, "3.11.1"},
++     {:topbar, "2.0.0"}
 +   ]
 + end
 ```
 
-> Alpine.js and Topbar are used in the example above, but you can use any NPM package you want (as long as it doesn't have postinstall scripts, and it's distributed already compiled to use).
+> ℹ️ Alpine.js and Topbar are used in the example above, but you can use any NPM package you want (as long as it doesn't have postinstall scripts).
+
+> ℹ️ NpmDeps doesn't fetch the sub-dependencies of the packages, so you will need to add them explicitly to your `npm_deps/0` function if you need them.
 
 Once you have added it, you can run `mix npm_deps.get` to get your NPM dependencies.  
 
