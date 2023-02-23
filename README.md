@@ -9,8 +9,6 @@
 
 ### A tool to help you manage your NPM dependencies in Elixir projects without the need of Node.js or NPM in your project or in your machine.
 
-⚠️ This project is very experimental, in early development, and should be used with caution.
-
 
 ## Setup
 
@@ -22,8 +20,8 @@ The package can be installed by adding `npm_deps` to your list of dependencies i
       app: :your_app,
       version: "0.1.0",
       elixir: "~> 1.14",
-     ...
-+      npm_deps: npm_deps()
+      ...
++     npm_deps: npm_deps()
     ]
   end
 
@@ -37,7 +35,7 @@ The package can be installed by adding `npm_deps` to your list of dependencies i
 + def npm_deps do
 +   [
 +     {:alpinejs, "3.11.1"},
-+     {:topbar, "2.0.0"}
++     {:topbar, "2.0.1"}
 +   ]
 + end
 ```
