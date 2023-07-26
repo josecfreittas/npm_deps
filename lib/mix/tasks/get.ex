@@ -4,13 +4,12 @@ defmodule Mix.Tasks.NpmDeps.Get do
   """
 
   use Mix.Task
-  require Logger
 
   @impl true
   def run(_args) do
     case Keyword.get(Mix.Project.config(), :npm_deps) do
       nil ->
-        Logger.alert("""
+        IO.puts("""
         The key :npm_deps was not found in the project.
 
         You can go to your mix.exs file and add the following line inside your project/0 function:
@@ -30,7 +29,7 @@ defmodule Mix.Tasks.NpmDeps.Get do
         """)
 
       [] ->
-        Logger.info("No NPM dependencies found to be fetched.")
+        IO.puts("No NPM dependencies found to be fetched.")
 
       deps ->
         NpmDeps.get(deps)

@@ -1,0 +1,47 @@
+on:
+  pull_request:
+  push:
+    branches:
+      - main
+
+jobs:
+  test:
+    name: Tests & Checks
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      pull-requests: write
+    env:
+      MIX_ENV: test
+
+    steps:
+      - uses: actions/checkout@v3
+
+      - name: Setup Erlang and Elixir
+        uses: erlef/setup-beam@v1.16.0
+        with:
+          elixir-version: "1.15.4-otp-26"
+          otp-version: "26.0"
+
+      - name: Mix and build cache
+        uses: actions/cache@v3
+        with:
+          path: |
+            deps
+            _build
+          key: ${{ runner.os }}-mix-${{ hashFiles('**/mix.lock') }}
+          restore-keys: ${{ runner.os }}-mix-
+
+      - name: Get dependencies
+        run: mix deps.get
+
+      - name: Code analyzers
+        run: |
+          mix format --check-formatted
+          mix compile --warnings-as-errors
+
+      - name: Tests & Coverage
+        uses: josecfreittas/elixir-coverage-feedback-action@v0.5
+        with:
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          coverage_threshold: 75

@@ -1,13 +1,13 @@
 defmodule Mix.Tasks.NpmDeps.GetTest do
   use ExUnit.Case, async: true
 
-  import ExUnit.CaptureLog
+  import ExUnit.CaptureIO
   import Mock
 
   describe "run/1" do
     test "it prints and error if the project is not properly configured" do
       with_mock Mix.Project, config: fn -> [] end do
-        assert capture_log(fn ->
+        assert capture_io(fn ->
                  Mix.Tasks.NpmDeps.Get.run([])
                end) =~ "The key :npm_deps was not found in the project."
       end
@@ -15,7 +15,7 @@ defmodule Mix.Tasks.NpmDeps.GetTest do
 
     test "it prints an alert if no dependencies are found" do
       with_mock Mix.Project, config: fn -> [npm_deps: []] end do
-        assert capture_log(fn ->
+        assert capture_io(fn ->
                  Mix.Tasks.NpmDeps.Get.run([])
                end) =~ "No NPM dependencies found to be fetched."
       end

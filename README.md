@@ -7,7 +7,7 @@
 
 <!-- MDOC !-->
 
-### A tool to help you manage your NPM dependencies in Elixir projects without the need of Node.js or NPM in your project or in your machine.
+### A tool to help you manage your NPM dependencies in Elixir projects without the need of Node.js or NPM in your environment.
 
 
 ## Setup
@@ -35,14 +35,17 @@ The package can be installed by adding `npm_deps` to your list of dependencies i
 + def npm_deps do
 +   [
 +     {:alpinejs, "3.11.1"},
-+     {:topbar, "2.0.1"}
++     {:topbar, "2.0.1"},
++     {"decimal.js", "10.4.3"}
 +   ]
 + end
 ```
 
-> ℹ️ Alpine.js and Topbar are used in the example above, but you can use any NPM package you want (as long as it doesn't have postinstall scripts).
+> ℹ️ Alpine.js, Topbar and decimal.js are used in the example above, but you can use any NPM package you want.
 
-> ℹ️ NpmDeps doesn't fetch the sub-dependencies of the packages, so you will need to add them explicitly to your `npm_deps/0` function if you need them.
+> ℹ️ NpmDeps will not fetch the sub-dependencies of the packages, so you will need to add them explicitly to your `npm_deps/0` function if you need them.
+
+> ℹ️ Post-install scripts are not supported.
 
 Once you have added it, you can run `mix npm_deps.get` to get your NPM dependencies.  
 
@@ -74,6 +77,16 @@ To run `npm_deps.get` in your deployment pipeline, you can add it to your `asset
         "esbuild default --minify",
         "phx.digest"
       ]
+    ]
+  end
+```
+
+You can also add an alias to run `npm_deps.get` alongside `deps.get`:
+```diff
+  defp aliases do
+    [
+      ...
++     "deps.get": ["npm_deps.get", "deps.get"]
     ]
   end
 ```
