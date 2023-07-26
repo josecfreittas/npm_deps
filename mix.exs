@@ -22,14 +22,12 @@ defmodule NpmDeps.MixProject do
     ]
   end
 
-  # Run "mix help compile.app" to learn about applications.
   def application do
     [
-      extra_applications: [:logger, :inets, :ssl]
+      extra_applications: [:inets, :ssl]
     ]
   end
 
-  # Run "mix help deps" to learn about dependencies.
   defp deps do
     [
       {:castore, ">= 0.0.0"},
