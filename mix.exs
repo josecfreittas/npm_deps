@@ -1,7 +1,7 @@
 defmodule NpmDeps.MixProject do
   use Mix.Project
 
-  @version "0.3.2"
+  @version "0.3.3"
   @source_url "https://github.com/josecfreittas/npm_deps"
 
   def project do
@@ -24,7 +24,7 @@ defmodule NpmDeps.MixProject do
 
   def application do
     [
-      extra_applications: [:inets, :ssl]
+      extra_applications: [:inets, :ssl, :public_key]
     ]
   end
 

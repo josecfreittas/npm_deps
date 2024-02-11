@@ -28,7 +28,7 @@ The package can be installed by adding `npm_deps` to your list of dependencies i
   def deps do
     [
       ...
-+     {:npm_deps, "~> 0.3.2", runtime: false}
++     {:npm_deps, "~> 0.3.3", runtime: false}
     ]
   end
 
@@ -86,7 +86,7 @@ You can also add an alias to run `npm_deps.get` alongside `deps.get`:
   defp aliases do
     [
       ...
-+     "deps.get": ["npm_deps.get", "deps.get"]
++     "deps.get": ["deps.get", "npm_deps.get"]
     ]
   end
 ```
