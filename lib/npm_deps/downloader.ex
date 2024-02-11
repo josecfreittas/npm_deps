@@ -20,7 +20,7 @@ defmodule NpmDeps.Downloader do
   end
 
   def copy_to_deps(tmp_dir, namespace) do
-    with package_path <- Path.join(Mix.Project.deps_path, "#{namespace}"),
+    with package_path <- Path.join(Mix.Project.deps_path(), "#{namespace}"),
          :ok <- File.mkdir_p(Path.dirname(package_path)),
          {:ok, _binary} <- File.cp_r(Path.join(tmp_dir, "package"), package_path) do
       :ok
