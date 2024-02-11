@@ -31,12 +31,16 @@ defmodule NpmDeps.Downloader do
     do: :erl_tar.extract({:binary, tar}, [:compressed, cwd: to_charlist(tmp_dir)])
 
   def fetch_body!(url) do
+    scheme = URI.parse(url).scheme
+
     ensure_required_apps()
-    set_http_and_https_proxies()
+    set_http_or_https_proxy(scheme)
+
+    http_options = http_options(scheme)
 
     url = String.to_charlist(url)
 
-    case :httpc.request(:get, {url, []}, http_options(), body_format: :binary) do
+    case :httpc.request(:get, {url, []}, http_options, body_format: :binary) do
       {:ok, {{_, 200, _}, _headers, body}} -> body
       error -> raise "Couldn't fetch #{url}: #{inspect(error)}"
     end
@@ -65,30 +69,60 @@ defmodule NpmDeps.Downloader do
     {:ok, _} = Application.ensure_all_started(:ssl)
   end
 
-  defp set_http_and_https_proxies() do
-    if proxy = System.get_env("HTTP_PROXY") || System.get_env("http_proxy"),
-      do: :httpc.set_options([{:proxy, httpc_proxy(proxy)}])
-
-    if proxy = System.get_env("HTTPS_PROXY") || System.get_env("https_proxy"),
-      do: :httpc.set_options([{:https_proxy, httpc_proxy(proxy)}])
+  defp set_http_or_https_proxy(scheme) do
+    if proxy = proxy_for_scheme(scheme) do
+      %{host: host, port: port} = URI.parse(proxy)
+      IO.puts("Using #{String.upcase(scheme)}_PROXY: #{proxy}")
+      set_option = if "https" == scheme, do: :https_proxy, else: :proxy
+      :httpc.set_options([{set_option, {{String.to_charlist(host), port}, []}}])
+    end
   end
 
-  defp httpc_proxy(proxy) do
-    %{host: host, userinfo: userinfo, port: port} = URI.parse(proxy)
-    authority = if userinfo, do: "#{userinfo}@#{host}", else: host
-    {{String.to_charlist(authority), port}, []}
-  end
+  defp proxy_for_scheme("http"),
+    do: System.get_env("HTTP_PROXY") || System.get_env("http_proxy")
 
-  defp http_options() do
-    [
-      ssl: [
-        verify: :verify_peer,
-        cacertfile: String.to_charlist(CAStore.file_path()),
-        depth: 2,
-        customize_hostname_check: [
-          match_fun: :public_key.pkix_verify_hostname_match_fun(:https)
+  defp proxy_for_scheme("https"),
+    do: System.get_env("HTTPS_PROXY") || System.get_env("https_proxy")
+
+  defp http_options(scheme) do
+    maybe_add_proxy_auth(
+      [
+        ssl: [
+          verify: :verify_peer,
+          cacertfile: String.to_charlist(CAStore.file_path()),
+          depth: 2,
+          customize_hostname_check: [
+            match_fun: :public_key.pkix_verify_hostname_match_fun(:https)
+          ],
+          versions: protocol_versions()
         ]
-      ]
-    ]
+      ],
+      scheme
+    )
   end
+
+  defp maybe_add_proxy_auth(http_options, scheme) do
+    case proxy_auth(scheme) do
+      nil -> http_options
+      auth -> [{:proxy_auth, auth} | http_options]
+    end
+  end
+
+  defp proxy_auth(scheme) do
+    with proxy when is_binary(proxy) <- proxy_for_scheme(scheme),
+         %{userinfo: userinfo} when is_binary(userinfo) <- URI.parse(proxy),
+         [username, password] <- String.split(userinfo, ":") do
+      {String.to_charlist(username), String.to_charlist(password)}
+    else
+      _ -> nil
+    end
+  end
+
+  defp protocol_versions do
+    if otp_version() < 25,
+      do: [:"tlsv1.2"],
+      else: [:"tlsv1.2", :"tlsv1.3"]
+  end
+
+  defp otp_version, do: :erlang.system_info(:otp_release) |> List.to_integer()
 end
