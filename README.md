@@ -28,7 +28,7 @@ The package can be installed by adding `npm_deps` to your list of dependencies i
   def deps do
     [
       ...
-+     {:npm_deps, "~> 0.3.1", runtime: false}
++     {:npm_deps, "~> 0.3.2", runtime: false}
     ]
   end
 
