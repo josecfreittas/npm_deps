@@ -81,15 +81,6 @@ To run `npm_deps.get` in your deployment pipeline, you can add it to your `asset
   end
 ```
 
-You can also add an alias to run `npm_deps.get` alongside `deps.get`:
-```diff
-  defp aliases do
-    [
-      ...
-+     "deps.get": ["deps.get", "npm_deps.get"]
-    ]
-  end
-```
 
 <!-- MDOC !-->
 
